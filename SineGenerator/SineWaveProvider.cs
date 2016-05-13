@@ -22,7 +22,10 @@ namespace SineGenerator
             // For sawtooth instead of sine: waveTable[index] = (float)index / sampleRate;
             Frequency = 1000f;
             Volume = 0.25f;
+            PortamentoTime = 0.2; // thought this was in seconds, but glide seems to take a bit longer
         }
+
+        public double PortamentoTime { get; set; }
 
         public double Frequency
         {
@@ -46,7 +49,8 @@ namespace SineGenerator
             if (seekFreq) // process frequency change only once per call to Read
             {
                 targetPhaseStep = waveTable.Length * (frequency / WaveFormat.SampleRate);
-                phaseStepDelta = (targetPhaseStep - currentPhaseStep) / (WaveFormat.SampleRate / 2.0);
+
+                phaseStepDelta = (targetPhaseStep - currentPhaseStep) / (WaveFormat.SampleRate * PortamentoTime);
                 seekFreq = false;
             }
             var vol = Volume; // process volume change only once per call to Read
