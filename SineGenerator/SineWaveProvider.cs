@@ -5,7 +5,7 @@ namespace SineGenerator
 {
     class SineWaveProvider : ISampleProvider
     {
-        private float[] waveTable;
+        private readonly float[] waveTable;
         private double phase;
         private double currentPhaseStep;
         private double targetPhaseStep;
@@ -22,7 +22,7 @@ namespace SineGenerator
             // For sawtooth instead of sine: waveTable[index] = (float)index / sampleRate;
             Frequency = 1000f;
             Volume = 0.25f;
-            PortamentoTime = 0.2; // thought this was in seconds, but glide seems to take a bit longer
+            PortamentoTime = 0.5; // thought this was in seconds, but glide seems to take a bit longer
         }
 
         public double PortamentoTime { get; set; }
@@ -57,10 +57,10 @@ namespace SineGenerator
             for (int n = 0; n < count; ++n)
             {
                 int waveTableIndex = (int)phase % waveTable.Length;
-                buffer[n + offset] = this.waveTable[waveTableIndex] * vol;
+                buffer[n + offset] = waveTable[waveTableIndex] * vol;
                 phase += currentPhaseStep;
-                if (this.phase > (double)this.waveTable.Length)
-                    this.phase -= (double)this.waveTable.Length;
+                if (phase > waveTable.Length)
+                    phase -= waveTable.Length;
                 if (currentPhaseStep != targetPhaseStep)
                 {
                     currentPhaseStep += phaseStepDelta;
